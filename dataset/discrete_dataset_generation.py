@@ -7,7 +7,23 @@ import my_interpol
 from scipy import interpolate
 import random
 import pdb
-from numpy.lib.scimath import sqrt as csqrt
+from numpy.lib.scimath import sqrt as csqrtv
+from huggingface_hub import snapshot_download
+
+repo_id = "quchenyuan/360x_dataset_HR"
+
+# Set the custom download path
+custom_download_path = "/root/jh/DeepCalib/dataset/360x_dataset_HR"
+
+# Download only the "panoramic" folder to the custom path
+snapshot_download(
+    repo_id=repo_id,
+    repo_type="dataset",
+    allow_patterns=["panoramic/*"],
+    cache_dir=custom_download_path,)
+    # token="")
+
+
 random.seed(9001)
 np.random.seed(1)
 
@@ -36,7 +52,7 @@ def diskradius(xi, f):
 
 
 #----------------constants--------------
-path_to_360_images = '/home/user/Documents/SUN360_urls_9104x4552/all_images_new/*.jpg'
+path_to_360_images = 'all_images_new/train/RGB/*.jpg'
 list_360_image_paths = glob.glob(path_to_360_images)
 
 H=299
@@ -46,7 +62,7 @@ v0 = H / 2.
 
 grid_x, grid_y = np.meshgrid(range(W), range(H))
 
-starttime = time.clock()
+# starttime = time.clock()
 for image360_path in list_360_image_paths: #length of your filename list
 
     image360 = cv2.imread(image360_path)
@@ -150,7 +166,7 @@ for image360_path in list_360_image_paths: #length of your filename list
         name = image360_path.split('/')[-1]
         name_list = name.split('.')
 
-        cv2.imwrite('/home/user/Documents/test_discrete/' + name_list[0] +'_f_'+str(f)+'_d_'+str(xi)+ '.' +name_list[-1], im)
+        cv2.imwrite('test_discrete/' + name_list[0] +'_f_'+str(f)+'_d_'+str(xi)+ '.' +name_list[-1], im)
 
 
-print "elapsed time ", time.clock() - starttime
+# print "elapsed time ", time.clock() - starttime

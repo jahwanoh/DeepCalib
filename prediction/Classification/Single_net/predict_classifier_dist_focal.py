@@ -1,6 +1,8 @@
 from __future__ import print_function
 
-import os, cv2, sys
+import cv2
+import os
+import sys
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.imagenet_utils import preprocess_input
 from keras.models import Model
@@ -9,21 +11,21 @@ from keras import optimizers
 import numpy as np
 import glob, os
 import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
+# from keras.backend.tensorflow_backend import set_session
 
-results_path = ""
-IMAGE_FILE_PATH_DISTORTED = ""
+results_path = "/root/jh/DeepCalib/weights/real_data/"
+IMAGE_FILE_PATH_DISTORTED = "/root/jh/DeepCalib/weights/real_data/distorted/"
 
 path_to_weights = 'weights_06_5.61.h5'
 
-filename_results = results_path + 'airport.txt'
+filename_results = results_path + 'real_data.txt'
 
 classes_focal = list(np.arange(40, 501, 10))
 classes_distortion = list(np.arange(0, 61, 1) / 50.)
 
 
 def get_paths(IMAGE_FILE_PATH_DISTORTED):
-    paths_test = glob.glob(IMAGE_FILE_PATH_DISTORTED + "*.jpg")
+    paths_test = glob.glob(IMAGE_FILE_PATH_DISTORTED + "*.jpeg")
     paths_test.sort()
 
     return paths_test
@@ -32,6 +34,15 @@ def get_paths(IMAGE_FILE_PATH_DISTORTED):
 paths_test = get_paths(IMAGE_FILE_PATH_DISTORTED)
 
 print(len(paths_test), 'test samples')
+
+# gpus = tf.config.experimental.list_physical_devices('GPU')
+# if gpus:
+#     try:
+#         for gpu in gpus:
+#             tf.config.experimental.set_memory_growth(gpu, True)
+#         print(f"{len(gpus)} GPU(s) available. Memory growth set.")
+#     except RuntimeError as e:
+#         print(e)
 
 with tf.device('/gpu:0'):
     input_shape = (299, 299, 3)
