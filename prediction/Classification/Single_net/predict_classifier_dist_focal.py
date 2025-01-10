@@ -13,8 +13,19 @@ import glob, os
 import tensorflow as tf
 # from keras.backend.tensorflow_backend import set_session
 
-results_path = "/root/jh/DeepCalib/weights/real_data/"
-IMAGE_FILE_PATH_DISTORTED = "/root/jh/DeepCalib/weights/real_data/distorted/"
+print("TensorFlow version:", tf.__version__)
+print("Num GPUs Available:", len(tf.config.list_physical_devices('GPU')))
+print("GPU Details:", tf.config.list_physical_devices('GPU'))
+
+with tf.device('/GPU:0'):
+    a = tf.constant([[1.0, 2.0], [3.0, 4.0]])
+    b = tf.constant([[1.0, 0.0], [0.0, 1.0]])
+    print(tf.matmul(a, b))
+    
+print("test done!")
+
+results_path = "/DeepCalib/weights/real_data/"
+IMAGE_FILE_PATH_DISTORTED = "/DeepCalib/weights/real_data/distorted/"
 
 path_to_weights = 'weights_06_5.61.h5'
 
@@ -25,7 +36,7 @@ classes_distortion = list(np.arange(0, 61, 1) / 50.)
 
 
 def get_paths(IMAGE_FILE_PATH_DISTORTED):
-    paths_test = glob.glob(IMAGE_FILE_PATH_DISTORTED + "*.jpeg")
+    paths_test = glob.glob(IMAGE_FILE_PATH_DISTORTED + "*.jp*")
     paths_test.sort()
 
     return paths_test
@@ -34,15 +45,6 @@ def get_paths(IMAGE_FILE_PATH_DISTORTED):
 paths_test = get_paths(IMAGE_FILE_PATH_DISTORTED)
 
 print(len(paths_test), 'test samples')
-
-# gpus = tf.config.experimental.list_physical_devices('GPU')
-# if gpus:
-#     try:
-#         for gpu in gpus:
-#             tf.config.experimental.set_memory_growth(gpu, True)
-#         print(f"{len(gpus)} GPU(s) available. Memory growth set.")
-#     except RuntimeError as e:
-#         print(e)
 
 with tf.device('/gpu:0'):
     input_shape = (299, 299, 3)
@@ -58,7 +60,7 @@ with tf.device('/gpu:0'):
     for layer in phi_model.layers:
         layer.name = layer.name + "_phi"
 
-    model = Model(input=main_input, output=[final_output_focal, final_output_distortion])
+    model = Model(inputs=main_input, outputs=[final_output_focal, final_output_distortion])
     model.load_weights(path_to_weights)
 
     n_acc_focal = 0
@@ -68,31 +70,32 @@ with tf.device('/gpu:0'):
     file = open(filename_results, 'a')
    
     #input image
-    image = cv2.imread('')
-   
-    image = cv2.resize(image, (299, 299))
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = image / 255.
+    for input_img_path in paths_test:
+        image = cv2.imread(input_img_path)
+    
+        image = cv2.resize(image, (299, 299))
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = image / 255.
 
-    image = image - 0.5
+        image = image - 0.5
 
-    image = image * 2.
-    image = np.expand_dims(image, 0)
+        image = image * 2.
+        image = np.expand_dims(image, 0)
 
-    image = preprocess_input(image)  
+        image = preprocess_input(image)  
 
-    # loop
-    prediction_focal = model.predict(image)[0]
-    prediction_dist = model.predict(image)[1]
-    n_acc_focal += classes_focal[np.argmax(prediction_focal[0])]
-    n_acc_dist += classes_distortion[np.argmax(prediction_dist[0])]
+        # loop
+        prediction_focal = model.predict(image)[0]
+        prediction_dist = model.predict(image)[1]
+        n_acc_focal += classes_focal[np.argmax(prediction_focal[0])]
+        n_acc_dist += classes_distortion[np.argmax(prediction_dist[0])]
 
-    #file.write(path + '\tprediction_focal\t' + str(
-        #classes_focal[np.argmax(prediction_focal[0])]) + '\tprediction_dist\t' + str(
-       # classes_distortion[np.argmax(prediction_dist[0])]) + '\n')
-    # print(' ')
-    print('focal:')
-    print(classes_focal[np.argmax(prediction_focal[0])])
+        file.write(input_img_path + '\tprediction_focal\t' + str(
+            classes_focal[np.argmax(prediction_focal[0])]) + '\tprediction_dist\t' + str(
+        classes_distortion[np.argmax(prediction_dist[0])]) + '\n')
+        print(' ')
+        print('focal:')
+        print(classes_focal[np.argmax(prediction_focal[0])])
 
-    print('dist:')
-    print(classes_distortion[np.argmax(prediction_dist[0])])
+        print('dist:')
+        print(classes_distortion[np.argmax(prediction_dist[0])])

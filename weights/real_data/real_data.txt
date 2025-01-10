@@ -1,2 +1,14 @@
-/root/jh/DeepCalib/weights/real_data/left_1724136235.187693.jpeg
-/root/jh/DeepCalib/weights/real_data/right_1724136241.0982177.jpeg
+/DeepCalib/weights/real_data/distorted/2_1mm.jpeg	prediction_focal	280	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/basler_l_scale.jpg	prediction_focal	500	prediction_dist	0.92
+/DeepCalib/weights/real_data/distorted/econ_large.jpeg	prediction_focal	400	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/image0000.jpg	prediction_focal	310	prediction_dist	0.86
+/DeepCalib/weights/real_data/distorted/left.jpeg	prediction_focal	330	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/left_1724136235ori.jpeg	prediction_focal	340	prediction_dist	0.78
+/DeepCalib/weights/real_data/distorted/lens1.jpeg	prediction_focal	370	prediction_dist	1.08
+/DeepCalib/weights/real_data/distorted/lens2.jpeg	prediction_focal	400	prediction_dist	0.76
+/DeepCalib/weights/real_data/distorted/right.jpeg	prediction_focal	380	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/right_1724136241ori.jpeg	prediction_focal	310	prediction_dist	0.66
+/DeepCalib/weights/real_data/distorted/stitching.jpg	prediction_focal	180	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/udlens.jpg	prediction_focal	210	prediction_dist	0.08
+/DeepCalib/weights/real_data/distorted/wide-angle-lenses-750px.jpg	prediction_focal	500	prediction_dist	1.2
+/DeepCalib/weights/real_data/distorted/wide-angle-lenses-750px2.jpg	prediction_focal	250	prediction_dist	1.2
